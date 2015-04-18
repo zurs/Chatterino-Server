@@ -56,6 +56,7 @@ function newConnection($dbh, $username){
     $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('Server', NULL, '" + $username + " just connected', NOW());";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
+    echo("true");
 }
 
 function newMessage($dbh, $senderNick, $messageText){
