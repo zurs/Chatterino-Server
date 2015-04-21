@@ -1,14 +1,14 @@
 <?php
 
 function createUser($dbh, $nickname, $password){
-    $sql = "INSERT INTO users (nickname, password) VALUES ('" + $nickname + "', '" + $password + "');";
+    $sql = "INSERT INTO users (nickname, password) VALUES ('{$nickname}', '{$password}');";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     echo("true");
 }
 
 function authorize($dbh, $nickname, $password){
-    $sql = "SELECT password FROM users WHERE username='" + $username + "';";
+    $sql = "SELECT password FROM users WHERE nickname='{$nickname}';";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     if($password == $stmt->fetch["password"]){
@@ -46,21 +46,21 @@ function returnLastMessages($dbh, $lastMessage){
 }
 
 function returnAmountMessages($dbh, $amount){
-    $sql = "SELECT * FROM chat ORDER BY datetime LIMIT " + $amount;
+    $sql = "SELECT * FROM chat ORDER BY datetime LIMIT {$amount}";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     echo(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
 }
 
-function newConnection($dbh, $username){
-    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('Server', NULL, '" + $username + " just connected', NOW());";
+function newConnection($dbh, $nickname){
+    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('Server', NULL, '{$nickname} just connected', NOW());";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     echo("true");
 }
 
 function newMessage($dbh, $senderNick, $messageText){
-    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('" + $senderNick + "', NULL, '" + $messageText + "', NOW());";
+    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('{$senderNick}', NULL, '{$messageText}', NOW());";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 }
