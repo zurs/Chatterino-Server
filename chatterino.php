@@ -17,15 +17,16 @@ $nickname = $data->nickname;
 $password = $data->password;
 $function = $data->function;
 
+
 if($function == "createUser"){ // Om en ny användare skulle vilja skapas
     createUser($dbh, $nickname, $password);
 }
 else{
-    if(authorize($dbh, $username, $password)){ // Autentierar användaren och tillåter ytterliga funktioner
+    if(authorize($dbh, $nickname, $password)){ // Autentierar användaren och tillåter ytterliga funktioner
         
         switch($function){
             case "connection":
-                newConnection($dbh, $username);
+                newConnection($dbh, $nickname);
                 break;
             case "checkForNewMessages":
                 $lastMessage = $data->lastMessage;
@@ -33,8 +34,7 @@ else{
                 break;
             case "newMessage":
                 $messageText = $data->messageText;
-                $senderNick = $data->username;
-                newMessage($dbh, $senderNick, $messageText);
+                newMessage($dbh, $nickname, $messageText);
                 break;
         }
         
