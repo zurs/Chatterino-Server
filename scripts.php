@@ -11,7 +11,8 @@ function authorize($dbh, $nickname, $password){
     $sql = "SELECT password FROM users WHERE nickname='{$nickname}';";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
-    if($password == $stmt->fetch["password"]){
+    $dbpass = $stmt->fetch()["password"];
+    if($password == $dbpass){
         return true;
     }
     else{
@@ -19,48 +20,21 @@ function authorize($dbh, $nickname, $password){
     }
 }
 
-function checkForNewMessages($dbh, $lastMessage){
-    $sql = "SELECT messageID FROM chat ORDER BY datetime LIMIT 1;";
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute();
-    if($lastMessage == $stmt->fetch["messageID"]){
-        echo("false");
-    }
-    else{
-        returnLastMessages($dbh, $lastMessage);
-    }
-}
-
-function returnLastMessages($dbh, $lastMessage){
-    $sql = "SELECT * FROM chat ORDER BY datetime LIMIT 20;";
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute();
-    
-    $iterations = 0;
-    while($message = $stmt->fetch()){
-        if($message["messageID"] == $lastMessage){
-            returnAmountMessages($dbh, $iterations);
-        }
-        $iterations = $iterations + 1;
-    }
-}
-
 function returnAmountMessages($dbh, $amount){
-    $sql = "SELECT * FROM chat ORDER BY datetime LIMIT {$amount}";
+    $sql = "SELECT * FROM chat ORDER BY messageID DESC LIMIT {$amount}";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
     echo(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
 }
 
 function newConnection($dbh, $nickname){
-    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('Server', NULL, '{$nickname} just connected', NOW());";
-    $stmt = $dbh->prepare($sql);
-    $stmt->execute();
+    $message = "{$nickname} just connected";
+    newMessage($dbh, "Server", $message);
     echo("true");
 }
 
 function newMessage($dbh, $senderNick, $messageText){
-    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('{$senderNick}', NULL, '{$messageText}', NOW());";
+    $sql = "INSERT INTO chat (senderNick, messageID, messageText, datetime) VALUES ('{$senderNick}', NULL, '{$messageText }', NOW());";
     $stmt = $dbh->prepare($sql);
     $stmt->execute();
 }
